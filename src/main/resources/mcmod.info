@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "ducktapecore",
+    "name": "DuckTapeCore",
+    "description": "Core mod for modpack",
+    "version": "1.0.0",
+    "mcversion": "1.12.2",
+    "url": "",
+    "authorList": ["Hippo0824"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": ["mixinbooter"],
+    "requiredMods": ["mixinbooter@[8.0,)"]
+  }
+]

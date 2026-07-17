@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hippo.ducktapecore.mixin",
+  "refmap": "mixins.ducktapecore.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinWorldServer"
+  ],
+  "client": [],
+  "server": [],
+  "verbose": false
+}
