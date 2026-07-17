@@ -28,6 +28,10 @@ public class ModConfig {
     @Config.Comment("true면 액션바(머리 위)로, false면 일반 채팅으로 메시지를 표시합니다.")
     public static boolean useActionBar = true;
 
+    @Config.Name("Blind Invisible Players")
+    @Config.Comment("true면 투명화(Invisibility) 상태인 플레이어에게 자동으로 실명(Blindness) 효과를 부여합니다.")
+    public static boolean blindInvisiblePlayers = true;
+
     @Mod.EventBusSubscriber(modid = DuckTapeCore.MODID)
     public static class ConfigEventHandler {
         @SubscribeEvent

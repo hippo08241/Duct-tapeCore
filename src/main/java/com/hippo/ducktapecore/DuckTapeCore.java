@@ -1,6 +1,7 @@
 package com.hippo.ducktapecore;
 
 import com.hippo.ducktapecore.handler.InteractionHandler;
+import com.hippo.ducktapecore.handler.PotionHandler;
 import com.hippo.ducktapecore.restriction.RestrictionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +36,7 @@ public class DuckTapeCore {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         LOGGER.info("[{}] init - 이벤트 핸들러 등록", NAME);
+        MinecraftForge.EVENT_BUS.register(new PotionHandler());
         MinecraftForge.EVENT_BUS.register(new InteractionHandler());
     }
 }
