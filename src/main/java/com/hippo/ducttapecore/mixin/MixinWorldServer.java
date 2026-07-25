@@ -1,6 +1,6 @@
-package com.hippo.ducktapecore.mixin;
+package com.hippo.ducttapecore.mixin;
 
-import com.hippo.ducktapecore.restriction.RestrictionManager;
+import com.hippo.ducttapecore.restriction.RestrictionManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -24,7 +24,7 @@ public abstract class MixinWorldServer {
                     target = "Lnet/minecraft/block/Block;randomTick(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V"
             )
     )
-    private void ducktapecore$onRandomTick(Block block, World world, BlockPos pos, IBlockState state, Random rand) {
+    private void ducttapecore$onRandomTick(Block block, World world, BlockPos pos, IBlockState state, Random rand) {
         if (RestrictionManager.isRestricted(world.provider.getDimension(), block)) {
             return; // 틱 실행 스킵
         }
@@ -32,7 +32,7 @@ public abstract class MixinWorldServer {
     }
 
     @Inject(method = "scheduleBlockUpdate", at = @At("HEAD"), cancellable = true)
-    private void ducktapecore$onScheduleUpdate(BlockPos pos, Block blockIn, int delay, int priority, CallbackInfo ci) {
+    private void ducttapecore$onScheduleUpdate(BlockPos pos, Block blockIn, int delay, int priority, CallbackInfo ci) {
         World self = (World) (Object) this;
         if (RestrictionManager.isRestricted(self.provider.getDimension(), blockIn)) {
             ci.cancel();

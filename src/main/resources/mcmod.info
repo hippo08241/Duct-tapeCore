@@ -1,7 +1,7 @@
 [
   {
-    "modid": "ducktapecore",
-    "name": "DuckTapeCore",
+    "modid": "ducttapecore",
+    "name": "DuctTapeCore",
     "description": "Core mod for modpack",
     "version": "1.0.0",
     "mcversion": "1.12.2",

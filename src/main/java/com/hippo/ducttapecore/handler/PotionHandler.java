@@ -1,6 +1,6 @@
-package com.hippo.ducktapecore.handler;
+package com.hippo.ducttapecore.handler;
 
-import com.hippo.ducktapecore.config.ModConfig;
+import com.hippo.ducttapecore.config.ModConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;

@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.hippo.ducktapecore.mixin",
+  "package": "com.hippo.ducttapecore.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [],

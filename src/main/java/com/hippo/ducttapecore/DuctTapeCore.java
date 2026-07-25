@@ -1,8 +1,8 @@
-package com.hippo.ducktapecore;
+package com.hippo.ducttapecore;
 
-import com.hippo.ducktapecore.handler.InteractionHandler;
-import com.hippo.ducktapecore.handler.PotionHandler;
-import com.hippo.ducktapecore.restriction.RestrictionManager;
+import com.hippo.ducttapecore.handler.InteractionHandler;
+import com.hippo.ducttapecore.handler.PotionHandler;
+import com.hippo.ducttapecore.restriction.RestrictionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -11,21 +11,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(
-        modid = DuckTapeCore.MODID,
-        name = DuckTapeCore.NAME,
-        version = DuckTapeCore.VERSION,
+        modid = DuctTapeCore.MODID,
+        name = DuctTapeCore.NAME,
+        version = DuctTapeCore.VERSION,
         acceptedMinecraftVersions = "[1.12.2]"
 )
-public class DuckTapeCore {
+public class DuctTapeCore {
 
-    public static final String MODID = "ducktapecore";
-    public static final String NAME = "DuckTapeCore";
+    public static final String MODID = "ducttapecore";
+    public static final String NAME = "DuctTapeCore";
     public static final String VERSION = "1.0.0";
 
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     @Mod.Instance(MODID)
-    public static DuckTapeCore INSTANCE;
+    public static DuctTapeCore INSTANCE;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
