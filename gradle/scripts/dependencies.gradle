@@ -35,6 +35,7 @@ dependencies {
     // Example - Modrinth dependencies:
     // 'maven.modrinth:jei:4.16.1.1000' << jei = project name, 4.16.1.1000 = file version
     // Full documentation: https://docs.modrinth.com/docs/tutorials/maven/
+    modImplementation "curse.maven:jei-238222:5846804"
 
     // Common dependency types (configuration):
     // implementation = dependency available at both compile time and runtime

@@ -23,7 +23,12 @@ public class RestrictionManager {
     public static void reload() {
         RESTRICTIONS.clear();
 
-        for (String entry : ModConfig.restrictedBlocks) {
+        if (!ModConfig.restrictedBlocksEnabled) {
+            DuctTapeCore.LOGGER.info("[DuctTapeCore] Restricted Blocks 기능이 꺼져 있어 규칙을 로드하지 않습니다.");
+            return;
+        }
+
+        for (String entry : ModConfig.restrictedBlocksList) {
             if (entry == null || entry.trim().isEmpty()) continue;
 
             try {

@@ -30,7 +30,7 @@ public class InteractionHandler {
         if (!world.isRemote) {
             EntityPlayer player = event.getEntityPlayer();
             if (player != null) {
-                player.sendStatusMessage(new TextComponentTranslation(message), ModConfig.useActionBar);
+                player.sendStatusMessage(new TextComponentTranslation(message), ModConfig.restrictedBlocksUseActionBar);
             }
         }
     }

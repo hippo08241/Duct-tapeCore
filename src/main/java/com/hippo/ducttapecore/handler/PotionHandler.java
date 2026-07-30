@@ -12,7 +12,7 @@ public class PotionHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        if (!ModConfig.blindInvisiblePlayers) return;
+        if (!ModConfig.blindInvisiblePlayersEnabled) return;
 
         EntityPlayer player = event.player;
         if (player.world.isRemote) return;
