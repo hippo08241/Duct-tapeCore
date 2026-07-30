@@ -10,6 +10,20 @@ plugins {
 
 import org.jetbrains.gradle.ext.Gradle
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CurseMaven'
+                url 'https://curse.cleanroommc.com'
+            }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
+}
+
 ext {
     //noinspection GroovyAssignabilityCheck
     access_transformer_locations = "${mod_id}_at.cfg"
@@ -77,9 +91,9 @@ unimined.minecraft {
     }
 
     defaultRemapJar = false
-    
+
     String jarTaskName = enable_shadow.toBoolean() ? "shadowJar" : "jar"
-    
+
     remap(tasks.named(jarTaskName).get()) {
         mixinRemap {
             enableBaseMixin()
@@ -235,13 +249,9 @@ test {
     }
 }
 
-repositories {
-    maven {
-        url = "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
+dependencies {
+    modCompileOnly 'curse.maven:jei-238222:5846804'
+    modCompileOnly 'curse.maven:quality-tools-264756:2732994'
 }
 
 tasks.withType(JavaCompile).configureEach {

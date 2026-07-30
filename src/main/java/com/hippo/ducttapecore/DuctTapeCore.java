@@ -1,6 +1,7 @@
 package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
+import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
 import com.hippo.ducttapecore.config.ModConfig;
 import com.hippo.ducttapecore.handler.InteractionHandler;
 import com.hippo.ducttapecore.handler.PotionHandler;
@@ -10,6 +11,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.Logger;
         modid = DuctTapeCore.MODID,
         name = DuctTapeCore.NAME,
         version = DuctTapeCore.VERSION,
+        dependencies = "after:qualitytools;after:jei",
         acceptedMinecraftVersions = "[1.12.2]"
 )
 public class DuctTapeCore {
@@ -46,6 +49,13 @@ public class DuctTapeCore {
         if (Loader.isModLoaded("qualitytools")) {
             LOGGER.info("[{}] Quality Tools 감지됨 - 패치 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new QualityToolsPatchHandler());
+        }
+    }
+
+    @Mod.EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        if (Loader.isModLoaded("qualitytools") && Loader.isModLoaded("jei")) {
+            QualityToolsJeiIntegration.syncRecipes();
         }
     }
 }

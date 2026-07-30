@@ -9,10 +9,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
-/**
- * @Config 어노테이션 자동 처리 방식 대신, Configuration API를 직접 다루는 수동 방식.
- * Universal Tweaks와 동일한 카테고리/문법 구조를 위해 이 방식을 사용한다.
- */
 public class ModConfig {
 
     private static Configuration config;
@@ -29,6 +25,7 @@ public class ModConfig {
     public static boolean qualityToolsEnabled;
     public static String[] qualityToolsBlacklist;
     public static boolean qualityToolsBlockCreative;
+    public static boolean qualityToolsJeiEnabled;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -91,6 +88,11 @@ public class ModConfig {
                 "true면 크리에이티브 모드 인벤토리에서 가져온 아이템에는 Quality Tools 수식어가 붙지 않습니다."
         );
 
+        qualityToolsJeiEnabled = config.getBoolean(
+                "[4] JEI Integration Toggle", catQualityTools, true,
+                "false로 설정하면 JEI에서 Quality Tools 리포징 레시피(어떤 재료가 필요한지)를 표시하지 않습니다."
+        );
+
         if (config.hasChanged()) {
             config.save();
         }
@@ -104,6 +106,7 @@ public class ModConfig {
                 syncConfig();
                 RestrictionManager.reload();
                 com.hippo.ducttapecore.compat.QualityToolsPatchHandler.invalidateCache();
+                com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration.syncRecipes();
             }
         }
     }
