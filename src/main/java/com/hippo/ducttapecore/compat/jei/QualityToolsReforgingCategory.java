@@ -18,7 +18,6 @@ public class QualityToolsReforgingCategory extends BlankRecipeCategory<QualityTo
 
     private static final int SLOT_TOOL = 0;
     private static final int SLOT_MATERIAL = 1;
-    private static final int SLOT_OUTPUT = 2;
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -59,7 +58,6 @@ public class QualityToolsReforgingCategory extends BlankRecipeCategory<QualityTo
 
         itemStacks.init(SLOT_TOOL, true, 0, 4);
         itemStacks.init(SLOT_MATERIAL, true, 36, 4);
-        itemStacks.init(SLOT_OUTPUT, false, 0, 4); // tool과 같은 자리 - R 조회용, 시각적으로는 겹쳐서 하나로 보임
 
         itemStacks.set(ingredients);
     }

@@ -20,6 +20,5 @@ public class QualityToolsReforgingRecipe implements IRecipeWrapper {
     @Override
     public void getIngredients(IIngredients ingredients) {
         ingredients.setInputLists(ItemStack.class, Arrays.asList(tools, materials));
-        ingredients.setOutputLists(ItemStack.class, java.util.Collections.singletonList(tools));
     }
 }
