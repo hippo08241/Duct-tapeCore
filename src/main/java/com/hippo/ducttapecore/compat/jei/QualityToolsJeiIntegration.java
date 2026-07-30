@@ -31,11 +31,9 @@ public class QualityToolsJeiIntegration {
         if (jeiRuntime == null || !Loader.isModLoaded("qualitytools")) {
             return;
         }
-
         List<QualityToolsReforgingRecipe> recipes = ModConfig.qualityToolsJeiEnabled
                 ? buildReforgingRecipes()
                 : new ArrayList<>();
-
         Minecraft.getMinecraft().addScheduledTask(() -> applyRecipes(recipes));
     }
 
@@ -57,12 +55,13 @@ public class QualityToolsJeiIntegration {
 
     private static List<QualityToolsReforgingRecipe> buildReforgingRecipes() {
         List<QualityToolsReforgingRecipe> recipes = new ArrayList<>();
+        List<ItemStack> allItems = getAllRegisteredItems();
+        List<ItemStack> eligibleTools = findQualityEligibleItems(allItems);
 
         if (ConfigLoader.universalReforgeItem != null) {
-            List<ItemStack> tools = findQualityEligibleItems();
             List<ItemStack> materials = resolveMaterial(ConfigLoader.universalReforgeItem);
-            if (!tools.isEmpty() && !materials.isEmpty()) {
-                recipes.add(new QualityToolsReforgingRecipe(tools, materials));
+            if (!eligibleTools.isEmpty() && !materials.isEmpty()) {
+                recipes.add(new QualityToolsReforgingRecipe(eligibleTools, materials));
             }
         }
 
@@ -74,6 +73,28 @@ public class QualityToolsJeiIntegration {
             }
             if (!tools.isEmpty() && !materials.isEmpty()) {
                 recipes.add(new QualityToolsReforgingRecipe(tools, materials));
+            }
+        }
+
+        if (ConfigLoader.useRepairItem) {
+            recipes.addAll(buildRepairItemRecipes(eligibleTools, allItems));
+        }
+
+        return recipes;
+    }
+
+    private static List<QualityToolsReforgingRecipe> buildRepairItemRecipes(List<ItemStack> eligibleTools, List<ItemStack> allItems) {
+        List<QualityToolsReforgingRecipe> recipes = new ArrayList<>();
+
+        for (ItemStack tool : eligibleTools) {
+            List<ItemStack> materials = new ArrayList<>();
+            for (ItemStack candidate : allItems) {
+                if (tool.getItem().getIsRepairable(tool, candidate)) {
+                    materials.add(candidate);
+                }
+            }
+            if (!materials.isEmpty()) {
+                recipes.add(new QualityToolsReforgingRecipe(java.util.Collections.singletonList(tool), materials));
             }
         }
 
@@ -94,13 +115,20 @@ public class QualityToolsJeiIntegration {
         return result;
     }
 
-    private static List<ItemStack> findQualityEligibleItems() {
+    private static List<ItemStack> getAllRegisteredItems() {
         List<ItemStack> result = new ArrayList<>();
         for (Item item : ForgeRegistries.ITEMS) {
             ItemStack stack = new ItemStack(item);
-            if (stack.isEmpty()) {
-                continue;
+            if (!stack.isEmpty()) {
+                result.add(stack);
             }
+        }
+        return result;
+    }
+
+    private static List<ItemStack> findQualityEligibleItems(List<ItemStack> allItems) {
+        List<ItemStack> result = new ArrayList<>();
+        for (ItemStack stack : allItems) {
             for (QualityType type : ConfigLoader.qualityTypes.values()) {
                 if (type != null && type.itemMatches(stack)) {
                     result.add(stack);
