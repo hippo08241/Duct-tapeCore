@@ -8,7 +8,9 @@
   "mixins": [
     "MixinWorldEvents"
   ],
-  "client": [],
+  "client": [
+    "MixinClientProxy"
+  ],
   "server": [],
   "verbose": false
 }

@@ -253,6 +253,7 @@ dependencies {
     modCompileOnly 'curse.maven:jei-238222:5846804'
     modCompileOnly 'curse.maven:quality-tools-264756:2732994'
     modCompileOnly 'curse.maven:global-gamerules-227657:2654852'
+    modCompileOnly 'curse.maven:hardcore-revival-482114:2863239'
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -34,6 +34,9 @@ public class ModConfig {
     // ===== compat.global game rules =====
     public static boolean globalGameRulesEnabled;
 
+    // ===== compat.hardcore revival =====
+    public static boolean hardcoreRevivalEnabled;
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
         syncConfig();
@@ -109,6 +112,17 @@ public class ModConfig {
                 "[1] Prevent Command Changes From Saving Toggle", catGlobalGameRules, true,
                 "true면 서버에서 /gamerule 커맨드로 값을 바꿔도 GlobalGameRules의 config 파일에는 반영되지 않고,\n" +
                         "월드를 불러올 때 사용했던(=config 파일의) 값으로 항상 되돌립니다."
+        );
+
+        // ---- compat.hardcore revival ----
+        String catHardcoreRevival = "compat.hardcore revival";
+        config.setCategoryComment(catHardcoreRevival,
+                "HardcoreRevival 모드 관련 패치 설정입니다. HardcoreRevival이 설치되어 있지 않으면 이 항목은 아무 효과가 없습니다.");
+
+        hardcoreRevivalEnabled = config.getBoolean(
+                "[1] Fix Death Screen Not Appearing Toggle", catHardcoreRevival, true,
+                "true면 '사망 수락(Die)' 버튼을 눌렀을 때 남아있는 채팅 화면을 강제로 닫아,\n" +
+                        "ESC를 눌러야만 사망 화면이 뜨는 문제를 방지합니다."
         );
 
         if (config.hasChanged()) {

@@ -23,6 +23,9 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.endsWith("MixinWorldEvents")) {
             return classExists("se.gory_moon.globalgamerules.WorldEvents");
         }
+        if (mixinClassName.endsWith("MixinClientProxy")) {
+            return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
+        }
         return true;
     }
 
