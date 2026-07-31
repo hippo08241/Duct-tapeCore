@@ -1,0 +1,14 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.hippo.ducttapecore.mixin.compat",
+  "refmap": "mixins.ducttapecore.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "com.hippo.ducttapecore.mixin.compat.DuctTapeCompatMixinPlugin",
+  "mixins": [
+    "MixinWorldEvents"
+  ],
+  "client": [],
+  "server": [],
+  "verbose": false
+}

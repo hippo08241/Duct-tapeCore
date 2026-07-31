@@ -9,6 +9,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
+/**
+ * @Config 어노테이션 자동 처리 방식 대신, Configuration API를 직접 다루는 수동 방식.
+ * Universal Tweaks와 동일한 카테고리/문법 구조를 위해 이 방식을 사용한다.
+ */
 public class ModConfig {
 
     private static Configuration config;
@@ -26,6 +30,9 @@ public class ModConfig {
     public static String[] qualityToolsBlacklist;
     public static boolean qualityToolsBlockCreative;
     public static boolean qualityToolsJeiEnabled;
+
+    // ===== compat.global game rules =====
+    public static boolean globalGameRulesEnabled;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -91,6 +98,17 @@ public class ModConfig {
         qualityToolsJeiEnabled = config.getBoolean(
                 "[4] JEI Integration Toggle", catQualityTools, true,
                 "false로 설정하면 JEI에서 Quality Tools 리포징 레시피(어떤 재료가 필요한지)를 표시하지 않습니다."
+        );
+
+        // ---- compat.global game rules ----
+        String catGlobalGameRules = "compat.global game rules";
+        config.setCategoryComment(catGlobalGameRules,
+                "GlobalGameRules 모드 관련 패치 설정입니다. GlobalGameRules가 설치되어 있지 않으면 이 항목은 아무 효과가 없습니다.");
+
+        globalGameRulesEnabled = config.getBoolean(
+                "[1] Prevent Command Changes From Saving Toggle", catGlobalGameRules, true,
+                "true면 서버에서 /gamerule 커맨드로 값을 바꿔도 GlobalGameRules의 config 파일에는 반영되지 않고,\n" +
+                        "월드를 불러올 때 사용했던(=config 파일의) 값으로 항상 되돌립니다."
         );
 
         if (config.hasChanged()) {
