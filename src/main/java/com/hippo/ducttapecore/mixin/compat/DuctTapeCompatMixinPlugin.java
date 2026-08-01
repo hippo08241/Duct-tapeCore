@@ -11,6 +11,7 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
+        System.out.println("[DuctTapeCore/Mixin] compat mixin config 로드됨 (package=" + mixinPackage + ")");
     }
 
     @Override
@@ -20,22 +21,34 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        boolean result;
         if (mixinClassName.endsWith("MixinWorldEvents")) {
-            return classExists("se.gory_moon.globalgamerules.WorldEvents");
+            result = classExists("se.gory_moon.globalgamerules.WorldEvents");
+        } else if (mixinClassName.endsWith("MixinClientProxy")) {
+            result = classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
+        } else {
+            result = true;
         }
-        if (mixinClassName.endsWith("MixinClientProxy")) {
-            return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
-        }
-        return true;
+        System.out.println("[DuctTapeCore/Mixin] shouldApplyMixin(" + mixinClassName + ") -> " + result);
+        return result;
     }
 
     private boolean classExists(String className) {
-        try {
-            Class.forName(className, false, this.getClass().getClassLoader());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
+        String resourcePath = className.replace('.', '/') + ".class";
+        ClassLoader[] loaders = new ClassLoader[]{
+                this.getClass().getClassLoader(),
+                Thread.currentThread().getContextClassLoader(),
+                ClassLoader.getSystemClassLoader()
+        };
+        for (ClassLoader loader : loaders) {
+            if (loader == null) {
+                continue;
+            }
+            if (loader.getResource(resourcePath) != null) {
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
@@ -53,5 +66,6 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        System.out.println("[DuctTapeCore/Mixin] postApply: " + mixinClassName + " -> " + targetClassName);
     }
 }
