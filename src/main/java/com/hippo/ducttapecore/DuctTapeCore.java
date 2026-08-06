@@ -2,9 +2,11 @@ package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
+import com.hippo.ducttapecore.compat.sync.SyncHardcoreRevivalPatchHandler;
 import com.hippo.ducttapecore.config.ModConfig;
 import com.hippo.ducttapecore.handler.InteractionHandler;
 import com.hippo.ducttapecore.handler.PotionHandler;
+import com.hippo.ducttapecore.network.NetworkHandler;
 import com.hippo.ducttapecore.restriction.RestrictionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
@@ -38,6 +40,7 @@ public class DuctTapeCore {
         LOGGER.info("[{}] preInit - config 로드 중...", NAME);
         ModConfig.init(event.getSuggestedConfigurationFile());
         RestrictionManager.reload();
+        NetworkHandler.init();
     }
 
     @Mod.EventHandler
@@ -49,6 +52,11 @@ public class DuctTapeCore {
         if (Loader.isModLoaded("qualitytools")) {
             LOGGER.info("[{}] Quality Tools 감지됨 - 패치 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new QualityToolsPatchHandler());
+        }
+
+        if (Loader.isModLoaded("sync") && Loader.isModLoaded("hardcorerevival")) {
+            LOGGER.info("[{}] Sync + HardcoreRevival 둘 다 감지됨 - 호환성 패치 핸들러 등록", NAME);
+            MinecraftForge.EVENT_BUS.register(new SyncHardcoreRevivalPatchHandler());
         }
     }
 

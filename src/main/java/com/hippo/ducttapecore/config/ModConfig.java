@@ -9,10 +9,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
-/**
- * @Config 어노테이션 자동 처리 방식 대신, Configuration API를 직접 다루는 수동 방식.
- * Universal Tweaks와 동일한 카테고리/문법 구조를 위해 이 방식을 사용한다.
- */
 public class ModConfig {
 
     private static Configuration config;
@@ -36,6 +32,9 @@ public class ModConfig {
 
     // ===== compat.hardcore revival =====
     public static boolean hardcoreRevivalEnabled;
+
+    // ===== compat.sync =====
+    public static boolean syncHardcoreRevivalEnabled;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -123,6 +122,17 @@ public class ModConfig {
                 "[1] Fix Death Screen Not Appearing Toggle", catHardcoreRevival, true,
                 "true면 '사망 수락(Die)' 버튼을 눌렀을 때 남아있는 채팅 화면을 강제로 닫아,\n" +
                         "ESC를 눌러야만 사망 화면이 뜨는 문제를 방지합니다."
+        );
+
+        // ---- compat.sync ----
+        String catSync = "compat.sync";
+        config.setCategoryComment(catSync,
+                "Sync 모드와 HardcoreRevival 모드를 함께 사용할 때의 호환성 패치입니다. 둘 다 설치되어 있지 않으면 이 항목은 아무 효과가 없습니다.");
+
+        syncHardcoreRevivalEnabled = config.getBoolean(
+                "[1] Sync + HardcoreRevival Compat Toggle", catSync, true,
+                "true면 HardcoreRevival로 다운됐을 때 사용 가능한 Sync 복제인간(쉘)이 있으면 곧바로 그쪽으로 동기화합니다.\n" +
+                        "false면 HardcoreRevival의 원래 다운/구조 흐름을 그대로 사용합니다 (원래 스폰포인트에서 부활하는 버그가 재발할 수 있음)."
         );
 
         if (config.hasChanged()) {

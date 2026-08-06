@@ -254,6 +254,8 @@ dependencies {
     modCompileOnly 'curse.maven:quality-tools-264756:2732994'
     modCompileOnly 'curse.maven:global-gamerules-227657:2654852'
     modCompileOnly 'curse.maven:hardcore-revival-274036:2863239'
+    modCompileOnly 'curse.maven:ichunutil-229060:2682817'
+    modCompileOnly 'curse.maven:sync-229090:2682824'
 }
 
 tasks.withType(JavaCompile).configureEach {
