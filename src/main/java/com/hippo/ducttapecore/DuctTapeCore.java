@@ -1,9 +1,11 @@
 package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
+import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalDeathResetHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
 import com.hippo.ducttapecore.compat.sync.SyncHardcoreRevivalPatchHandler;
 import com.hippo.ducttapecore.config.ModConfig;
+import com.hippo.ducttapecore.debug.CommandSyncClientDebug;
 import com.hippo.ducttapecore.handler.InteractionHandler;
 import com.hippo.ducttapecore.handler.PotionHandler;
 import com.hippo.ducttapecore.network.NetworkHandler;
@@ -14,6 +16,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +32,7 @@ public class DuctTapeCore {
 
     public static final String MODID = "ducttapecore";
     public static final String NAME = "DuctTapeCore";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.0.0";
 
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
@@ -57,6 +61,15 @@ public class DuctTapeCore {
         if (Loader.isModLoaded("sync") && Loader.isModLoaded("hardcorerevival")) {
             LOGGER.info("[{}] Sync + HardcoreRevival 둘 다 감지됨 - 호환성 패치 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new SyncHardcoreRevivalPatchHandler());
+        }
+
+        if (Loader.isModLoaded("hardcorerevival")) {
+            MinecraftForge.EVENT_BUS.register(new HardcoreRevivalDeathResetHandler());
+        }
+
+        if (Loader.isModLoaded("sync") && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            LOGGER.info("[{}] Sync 감지됨 - /syncdebug 진단 커맨드 등록", NAME);
+            net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(new CommandSyncClientDebug());
         }
     }
 

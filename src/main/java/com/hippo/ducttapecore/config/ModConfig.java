@@ -32,9 +32,11 @@ public class ModConfig {
 
     // ===== compat.hardcore revival =====
     public static boolean hardcoreRevivalEnabled;
+    public static boolean hardcoreRevivalResetOnExternalReviveEnabled;
 
     // ===== compat.sync =====
-    public static boolean syncHardcoreRevivalEnabled;
+    public static String syncRespawnMode; // "OFF", "TIMEOUT", "INSTANT"
+    public static boolean syncFixShellStorageReregistration;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -124,15 +126,33 @@ public class ModConfig {
                         "ESC를 눌러야만 사망 화면이 뜨는 문제를 방지합니다."
         );
 
+        hardcoreRevivalResetOnExternalReviveEnabled = config.getBoolean(
+                "[2] Fix Frozen/Invisible After External Revival Toggle", catHardcoreRevival, true,
+                "true면 Sync의 복제인간, Cyberware의 Internal Defibrillator처럼 HardcoreRevival의\n" +
+                        "사망 처리를 취소하고 그 자리에서 되살리는 다른 모드와 같이 쓸 때, 부활 후 3인칭에서\n" +
+                        "투명해지고 움직이지 못하는 문제를 방지합니다."
+        );
+
         // ---- compat.sync ----
         String catSync = "compat.sync";
         config.setCategoryComment(catSync,
-                "Sync 모드와 HardcoreRevival 모드를 함께 사용할 때의 호환성 패치입니다. 둘 다 설치되어 있지 않으면 이 항목은 아무 효과가 없습니다.");
+                "Sync 모드 관련 패치 설정입니다. [1]은 HardcoreRevival도 같이 설치되어 있어야 동작하고,\n" +
+                        "[2]는 Sync만 설치되어 있어도 동작합니다. Sync가 설치되어 있지 않으면 이 항목들은 전부 아무 효과가 없습니다.");
 
-        syncHardcoreRevivalEnabled = config.getBoolean(
-                "[1] Sync + HardcoreRevival Compat Toggle", catSync, true,
-                "true면 HardcoreRevival로 다운됐을 때 사용 가능한 Sync 복제인간(쉘)이 있으면 곧바로 그쪽으로 동기화합니다.\n" +
-                        "false면 HardcoreRevival의 원래 다운/구조 흐름을 그대로 사용합니다 (원래 스폰포인트에서 부활하는 버그가 재발할 수 있음)."
+        syncRespawnMode = config.getString(
+                "[1] Sync Respawn Mode", catSync, "TIMEOUT",
+                "Sync 복제인간으로 부활하는 방식을 선택합니다.\n" +
+                        "  OFF: 이 기능을 끕니다. HardcoreRevival 원래 흐름만 사용합니다 (스폰포인트로 부활하는 버그가 재발할 수 있음).\n" +
+                        "  TIMEOUT: HardcoreRevival이 사망을 확정지을 때(구조 실패 또는 즉시부활 확정)만 복제인간으로 부활합니다.\n" +
+                        "  INSTANT: 다운되는 즉시(구조를 기다리지 않고) 사용 가능한 복제인간이 있으면 곧바로 부활합니다.",
+                new String[]{"OFF", "TIMEOUT", "INSTANT"}
+        );
+
+        syncFixShellStorageReregistration = config.getBoolean(
+                "[2] Fix Shell Storage Not Recognized After Restart Toggle", catSync, true,
+                "true면 Sync의 Shell Storage(복제인간 저장고)가 게임 재시작 후 인식이 안 되는 버그(전력이\n" +
+                        "계속 켜져 있었을 때 재등록이 안 되는 Sync 자체의 결함)를 고칩니다. HardcoreRevival 없이\n" +
+                        "Sync만 설치되어 있어도 동작합니다."
         );
 
         if (config.hasChanged()) {

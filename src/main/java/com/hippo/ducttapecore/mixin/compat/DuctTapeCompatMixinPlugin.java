@@ -11,7 +11,6 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-        System.out.println("[DuctTapeCore/Mixin] compat mixin config 로드됨 (package=" + mixinPackage + ")");
     }
 
     @Override
@@ -21,16 +20,16 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        boolean result;
         if (mixinClassName.endsWith("MixinWorldEvents")) {
-            result = classExists("se.gory_moon.globalgamerules.WorldEvents");
-        } else if (mixinClassName.endsWith("MixinClientProxy")) {
-            result = classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
-        } else {
-            result = true;
+            return classExists("se.gory_moon.globalgamerules.WorldEvents");
         }
-        System.out.println("[DuctTapeCore/Mixin] shouldApplyMixin(" + mixinClassName + ") -> " + result);
-        return result;
+        if (mixinClassName.endsWith("MixinClientProxy")) {
+            return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
+        }
+        if (mixinClassName.endsWith("MixinTileEntityShellStorage")) {
+            return classExists("me.ichun.mods.sync.common.tileentity.TileEntityShellStorage");
+        }
+        return true;
     }
 
     private boolean classExists(String className) {
@@ -66,6 +65,5 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        System.out.println("[DuctTapeCore/Mixin] postApply: " + mixinClassName + " -> " + targetClassName);
     }
 }

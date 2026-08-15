@@ -6,7 +6,8 @@
   "compatibilityLevel": "JAVA_8",
   "plugin": "com.hippo.ducttapecore.mixin.compat.DuctTapeCompatMixinPlugin",
   "mixins": [
-    "MixinWorldEvents"
+    "MixinWorldEvents",
+    "MixinTileEntityShellStorage"
   ],
   "client": [
     "MixinClientProxy"

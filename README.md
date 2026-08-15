@@ -1,3 +1,11 @@
+# Duct-tapeCore
+1.12.2 Modpack 제작을 위한 코어 모드
+다른 모드팩에서도 사용 가능하게 하기 위해 모든 기능은 config으로 끄고 켤 수 있습니다.
+
+Qulity tools 모드의 리포징이 JEI를 지원함
+일부 모드간 비호환성 수정
+- Hardcire Revive 와 Sync의 비호환성 수정
+
 # CleanroomModTemplate
 Mod development template for Cleanroom, uses a custom [Unimined fork](https://github.com/kappa-maintainer/Unimined) ([original](https://github.com/unimined/Unimined))
 
