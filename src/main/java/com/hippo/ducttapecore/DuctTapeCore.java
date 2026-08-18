@@ -1,11 +1,11 @@
 package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
+import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalClientTickHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalDeathResetHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
 import com.hippo.ducttapecore.compat.sync.SyncHardcoreRevivalPatchHandler;
 import com.hippo.ducttapecore.config.ModConfig;
-import com.hippo.ducttapecore.debug.CommandSyncClientDebug;
 import com.hippo.ducttapecore.handler.InteractionHandler;
 import com.hippo.ducttapecore.handler.PotionHandler;
 import com.hippo.ducttapecore.network.NetworkHandler;
@@ -64,12 +64,12 @@ public class DuctTapeCore {
         }
 
         if (Loader.isModLoaded("hardcorerevival")) {
+            LOGGER.info("[{}] HardcoreRevival 감지됨 - 범용 사망 리셋 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new HardcoreRevivalDeathResetHandler());
-        }
 
-        if (Loader.isModLoaded("sync") && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-            LOGGER.info("[{}] Sync 감지됨 - /syncdebug 진단 커맨드 등록", NAME);
-            net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(new CommandSyncClientDebug());
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                MinecraftForge.EVENT_BUS.register(new HardcoreRevivalClientTickHandler());
+            }
         }
     }
 
