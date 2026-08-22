@@ -256,6 +256,7 @@ dependencies {
     modCompileOnly 'curse.maven:hardcore-revival-274036:2863239'
     modCompileOnly 'curse.maven:ichunutil-229060:2682817'
     modCompileOnly 'curse.maven:sync-229090:2682824'
+    modCompileOnly 'curse.maven:architecturecraft-tridev-277631:2750633'
 }
 
 tasks.withType(JavaCompile).configureEach {

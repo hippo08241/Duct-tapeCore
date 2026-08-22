@@ -38,6 +38,9 @@ public class ModConfig {
     public static String syncRespawnMode; // "OFF", "TIMEOUT", "INSTANT"
     public static boolean syncFixShellStorageReregistration;
 
+    // ===== compat.architecture craft =====
+    public static boolean architectureCraftFixParticlesEnabled;
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
         syncConfig();
@@ -127,6 +130,14 @@ public class ModConfig {
         syncFixShellStorageReregistration = config.getBoolean(
                 "[2] Fix Shell Storage Not Recognized After Restart Toggle", catSync, true,
                 "재시작 후 저장고 인식 안 되는 Sync 버그 방지"
+        );
+
+        // ---- compat.architecture craft ----
+        String catArchitectureCraft = "compat.architecture craft";
+
+        architectureCraftFixParticlesEnabled = config.getBoolean(
+                "[1] Fix Shape Block Particle Textures Toggle", catArchitectureCraft, true,
+                "ArchitectureCraft로 변환된 블록을 부수거나 그 위에서 움직일 때 오류 텍스처 파티클이 나오는 문제 수정"
         );
 
         if (config.hasChanged()) {

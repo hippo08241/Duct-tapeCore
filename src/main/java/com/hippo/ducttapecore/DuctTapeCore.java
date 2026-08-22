@@ -1,6 +1,7 @@
 package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
+import com.hippo.ducttapecore.compat.architecturecraft.ArchitectureCraftParticleFixHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalClientTickHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalDeathResetHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
@@ -56,6 +57,13 @@ public class DuctTapeCore {
         if (Loader.isModLoaded("qualitytools")) {
             LOGGER.info("[{}] Quality Tools 감지됨 - 패치 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new QualityToolsPatchHandler());
+        }
+
+        if (Loader.isModLoaded("architecturecraft")) {
+            LOGGER.info("[{}] ArchitectureCraft 감지됨 - 파티클 텍스처 패치 핸들러 등록", NAME);
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+                MinecraftForge.EVENT_BUS.register(new ArchitectureCraftParticleFixHandler());
+            }
         }
 
         if (Loader.isModLoaded("sync") && Loader.isModLoaded("hardcorerevival")) {
