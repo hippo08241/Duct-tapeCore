@@ -257,6 +257,7 @@ dependencies {
     modCompileOnly 'curse.maven:ichunutil-229060:2682817'
     modCompileOnly 'curse.maven:sync-229090:2682824'
     modCompileOnly 'curse.maven:architecturecraft-tridev-277631:2750633'
+    modCompileOnly 'curse.maven:baubles-ex-1096600:6299308'
 }
 
 tasks.withType(JavaCompile).configureEach {

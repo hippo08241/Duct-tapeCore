@@ -2,6 +2,8 @@ package com.hippo.ducttapecore.compat.architecturecraft;
 
 import com.hippo.ducttapecore.DuctTapeCore;
 import com.hippo.ducttapecore.config.ModConfig;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.registry.IRegistry;
@@ -17,6 +19,7 @@ public class ArchitectureCraftParticleFixHandler {
 
     private static final String AC_MODID = "architecturecraft";
     private static final String SHAPE_BLOCK_PATH = "shape";
+    private static final String SAWBENCH_BLOCK_PATH = "sawbench";
 
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent event) {
@@ -26,28 +29,38 @@ public class ArchitectureCraftParticleFixHandler {
 
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
         Set<ModelResourceLocation> keys = modelRegistry.getKeys();
+        IBlockState planksState = Blocks.PLANKS.getDefaultState();
 
         int patched = 0;
         for (ModelResourceLocation location : keys) {
             if (!AC_MODID.equals(location.getNamespace())) {
                 continue;
             }
-            if (!SHAPE_BLOCK_PATH.equals(location.getPath())) {
-                continue;
-            }
 
+            String path = location.getPath();
             IBakedModel original = modelRegistry.getObject(location);
-            if (original == null || original instanceof ParticleFixBakedModel) {
+            if (original == null) {
                 continue;
             }
 
-            modelRegistry.putObject(location, new ParticleFixBakedModel(original));
-            patched++;
+            if (SHAPE_BLOCK_PATH.equals(path)) {
+                if (original instanceof ParticleFixBakedModel) {
+                    continue;
+                }
+                modelRegistry.putObject(location, new ParticleFixBakedModel(original));
+                patched++;
+            } else if (SAWBENCH_BLOCK_PATH.equals(path)) {
+                if (original instanceof StaticParticleTextureBakedModel) {
+                    continue;
+                }
+                modelRegistry.putObject(location, new StaticParticleTextureBakedModel(original, planksState));
+                patched++;
+            }
         }
 
         if (patched > 0) {
             DuctTapeCore.LOGGER.info(
-                    "[{}] ArchitectureCraft shape 블록 파티클 텍스처 패치 완료 ({}개 변형)",
+                    "[{}] ArchitectureCraft 블록 파티클 텍스처 패치 완료 ({}개 변형)",
                     DuctTapeCore.NAME, patched
             );
         }

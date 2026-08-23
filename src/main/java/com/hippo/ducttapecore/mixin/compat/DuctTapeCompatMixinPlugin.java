@@ -1,6 +1,7 @@
 package com.hippo.ducttapecore.mixin.compat;
 
 import com.hippo.ducttapecore.DuctTapeCore;
+import net.minecraftforge.common.config.Configuration;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -11,6 +12,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +22,11 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
     private static final String QUARK_BACKPACKS_CLASS_INTERNAL = "vazkii/quark/oddities/feature/Backpacks";
     private static final String BACKPACK_FIELD_NAME = "backpack";
     private static final String BACKPACK_LEGACY_FIELD_DESC = "Lnet/minecraft/item/Item;";
+
+    private static final String QUARK_ITEM_BACKPACK_CLASS_DOTTED = "vazkii.quark.oddities.item.ItemBackpack";
+
+    private static final String COMPAT_CONFIG_CATEGORY = "compat.mixin patches";
+    private static Configuration compatConfig;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -33,16 +40,24 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.endsWith("MixinWorldEvents")) {
-            return classExists("se.gory_moon.globalgamerules.WorldEvents");
+            return classExists("se.gory_moon.globalgamerules.WorldEvents")
+                    && isPatchEnabled("MixinWorldEvents", "GlobalGameRules 호환 패치 (WorldEvents) on/off");
         }
         if (mixinClassName.endsWith("MixinClientProxy")) {
-            return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy");
+            return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy")
+                    && isPatchEnabled("MixinClientProxy", "HardcoreRevival 클라이언트 호환 패치 on/off");
         }
         if (mixinClassName.endsWith("MixinTileEntityShellStorage")) {
-            return classExists("me.ichun.mods.sync.common.tileentity.TileEntityShellStorage");
+            return classExists("me.ichun.mods.sync.common.tileentity.TileEntityShellStorage")
+                    && isPatchEnabled("MixinTileEntityShellStorage", "Sync 저장고 호환 패치 on/off");
         }
         if (mixinClassName.endsWith("MixinQuarkBackpacksFieldCompat")) {
-            return classExists(QUARK_BACKPACKS_CLASS_DOTTED);
+            return classExists(QUARK_BACKPACKS_CLASS_DOTTED)
+                    && isPatchEnabled("MixinQuarkBackpacksFieldCompat", "QuarkRoN Backpacks 필드 호환 패치 on/off (BaublesEX NoSuchFieldError 방지)");
+        }
+        if (mixinClassName.endsWith("MixinQuarkItemBackpackRenderCompat")) {
+            return classExists(QUARK_ITEM_BACKPACK_CLASS_DOTTED)
+                    && isPatchEnabled("MixinQuarkItemBackpackRenderCompat", "QuarkRoN 배낭 등짝 렌더링 호환 패치 on/off (BaublesEX getModel 어댑터)");
         }
         return true;
     }
@@ -63,6 +78,38 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
             }
         }
         return false;
+    }
+
+    private boolean isPatchEnabled(String mixinSimpleName, String description) {
+        try {
+            Configuration config = getCompatConfig();
+            boolean enabled = config.getBoolean(
+                    mixinSimpleName, COMPAT_CONFIG_CATEGORY, true, description
+            );
+            if (config.hasChanged()) {
+                config.save();
+            }
+            return enabled;
+        } catch (Throwable t) {
+            logWarnIfPossible("[DuctTapeCore] compat mixin config를 읽지 못했습니다 (" + mixinSimpleName + "), 패치를 기본값(켬)으로 적용합니다: " + t);
+            return true;
+        }
+    }
+
+    private Configuration getCompatConfig() {
+        if (compatConfig == null) {
+            File configFile = new File("config", "ducttapecore.cfg");
+            compatConfig = new Configuration(configFile);
+        }
+        return compatConfig;
+    }
+
+    private void logWarnIfPossible(String message) {
+        try {
+            DuctTapeCore.LOGGER.warn(message);
+        } catch (Throwable ignored) {
+            System.out.println(message);
+        }
     }
 
     @Override

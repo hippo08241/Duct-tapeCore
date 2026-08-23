@@ -11,7 +11,8 @@
     "MixinQuarkBackpacksFieldCompat"
   ],
   "client": [
-    "MixinClientProxy"
+    "MixinClientProxy",
+    "MixinQuarkItemBackpackRenderCompat"
   ],
   "server": [],
   "verbose": false
