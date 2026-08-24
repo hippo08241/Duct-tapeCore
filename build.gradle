@@ -258,6 +258,9 @@ dependencies {
     modCompileOnly 'curse.maven:sync-229090:2682824'
     modCompileOnly 'curse.maven:architecturecraft-tridev-277631:2750633'
     modCompileOnly 'curse.maven:baubles-ex-1096600:6299308'
+    modCompileOnly 'curse.maven:moving-elevators-373051:7600431'
+    modCompileOnly 'curse.maven:supermartijn642s-config-lib-438332:4715393'
+    modCompileOnly 'curse.maven:supermartijn642s-core-lib-454372:8670300'
 }
 
 tasks.withType(JavaCompile).configureEach {

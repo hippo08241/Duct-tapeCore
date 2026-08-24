@@ -8,7 +8,9 @@
   "mixins": [
     "MixinWorldEvents",
     "MixinTileEntityShellStorage",
-    "MixinQuarkBackpacksFieldCompat"
+    "MixinQuarkBackpacksFieldCompat",
+    "MixinMovingElevatorsCamoConsume",
+    "MixinMovingElevatorsCamoHardness"
   ],
   "client": [
     "MixinClientProxy",

@@ -41,6 +41,9 @@ public class ModConfig {
     // ===== compat.architecture craft =====
     public static boolean architectureCraftFixParticlesEnabled;
 
+    // ===== compat.moving elevators =====
+    public static boolean movingElevatorsCamoDropEnabled;
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
         syncConfig();
@@ -138,6 +141,15 @@ public class ModConfig {
         architectureCraftFixParticlesEnabled = config.getBoolean(
                 "[1] Fix Shape Block Particle Textures Toggle", catArchitectureCraft, true,
                 "ArchitectureCraft로 변환된 블록을 부수거나 그 위에서 움직일 때 오류 텍스처 파티클이 나오는 문제 수정"
+        );
+
+        // ---- compat.moving elevators ----
+        String catMovingElevators = "compat.moving elevators";
+
+        movingElevatorsCamoDropEnabled = config.getBoolean(
+                "[1] Drop Camo Block On Break Toggle", catMovingElevators, true,
+                "엘리베이터/디스플레이/버튼 블록을 부술 때 카모로 사용된 블록도 같이 드랍 " +
+                        "(아이템 소모 및 강도 반영 패치는 compat/mixin patches 카테고리에서 개별 설정)"
         );
 
         if (config.hasChanged()) {

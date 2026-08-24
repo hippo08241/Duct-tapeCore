@@ -25,6 +25,9 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
 
     private static final String QUARK_ITEM_BACKPACK_CLASS_DOTTED = "vazkii.quark.oddities.item.ItemBackpack";
 
+    private static final String MOVINGELEVATORS_CAMOBLOCK_CLASS_DOTTED = "com.supermartijn642.movingelevators.blocks.CamoBlock";
+    private static final String MOVINGELEVATORS_CAMOBLOCKENTITY_CLASS_DOTTED = "com.supermartijn642.movingelevators.blocks.CamoBlockEntity";
+
     private static final String COMPAT_CONFIG_CATEGORY = "compat.mixin patches";
     private static Configuration compatConfig;
 
@@ -58,6 +61,14 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.endsWith("MixinQuarkItemBackpackRenderCompat")) {
             return classExists(QUARK_ITEM_BACKPACK_CLASS_DOTTED)
                     && isPatchEnabled("MixinQuarkItemBackpackRenderCompat", "QuarkRoN 배낭 등짝 렌더링 호환 패치 on/off (BaublesEX getModel 어댑터)");
+        }
+        if (mixinClassName.endsWith("MixinMovingElevatorsCamoConsume")) {
+            return classExists(MOVINGELEVATORS_CAMOBLOCK_CLASS_DOTTED)
+                    && isPatchEnabled("MixinMovingElevatorsCamoConsume", "MovingElevators 카모 적용 시 아이템 소모 패치 on/off");
+        }
+        if (mixinClassName.endsWith("MixinMovingElevatorsCamoHardness")) {
+            return classExists(MOVINGELEVATORS_CAMOBLOCKENTITY_CLASS_DOTTED)
+                    && isPatchEnabled("MixinMovingElevatorsCamoHardness", "MovingElevators 카모 블록 강도 반영 패치 on/off");
         }
         return true;
     }
@@ -141,6 +152,7 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
                 continue;
             }
             if (BACKPACK_LEGACY_FIELD_DESC.equals(fn.desc)) {
+                // 이미 호환 필드가 존재함 (중복 적용 방지)
                 return;
             }
             if ((fn.access & Opcodes.ACC_STATIC) != 0) {

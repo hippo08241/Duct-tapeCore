@@ -5,6 +5,7 @@ import com.hippo.ducttapecore.compat.architecturecraft.ArchitectureCraftParticle
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalClientTickHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalDeathResetHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
+import com.hippo.ducttapecore.compat.movingelevators.MovingElevatorsCamoDropHandler;
 import com.hippo.ducttapecore.compat.sync.SyncHardcoreRevivalPatchHandler;
 import com.hippo.ducttapecore.config.ModConfig;
 import com.hippo.ducttapecore.handler.InteractionHandler;
@@ -78,6 +79,11 @@ public class DuctTapeCore {
             if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 MinecraftForge.EVENT_BUS.register(new HardcoreRevivalClientTickHandler());
             }
+        }
+
+        if (Loader.isModLoaded("movingelevators")) {
+            LOGGER.info("[{}] MovingElevators 감지됨 - 카모 블록 드랍 핸들러 등록", NAME);
+            MinecraftForge.EVENT_BUS.register(new MovingElevatorsCamoDropHandler());
         }
     }
 
