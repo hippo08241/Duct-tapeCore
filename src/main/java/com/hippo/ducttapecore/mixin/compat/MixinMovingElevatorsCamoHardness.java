@@ -14,8 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Block.class)
 public abstract class MixinMovingElevatorsCamoHardness {
 
+    private static final ThreadLocal<Boolean> DUCTTAPECORE$IN_PROGRESS = ThreadLocal.withInitial(() -> Boolean.FALSE);
+
     @Inject(method = "getBlockHardness", at = @At("HEAD"), cancellable = true)
     private void ducttapecore$camoHardness(IBlockState state, World worldIn, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+        if (worldIn == null || pos == null) {
+            return;
+        }
+        if (Boolean.TRUE.equals(DUCTTAPECORE$IN_PROGRESS.get())) {
+            return;
+        }
+
         TileEntity te = worldIn.getTileEntity(pos);
         if (!(te instanceof CamoBlockEntity)) {
             return;
@@ -27,6 +36,12 @@ public abstract class MixinMovingElevatorsCamoHardness {
         }
 
         IBlockState camoState = camoEntity.getCamoState();
-        cir.setReturnValue(camoState.getBlockHardness(worldIn, pos));
+
+        DUCTTAPECORE$IN_PROGRESS.set(Boolean.TRUE);
+        try {
+            cir.setReturnValue(camoState.getBlockHardness(worldIn, pos));
+        } finally {
+            DUCTTAPECORE$IN_PROGRESS.set(Boolean.FALSE);
+        }
     }
 }
