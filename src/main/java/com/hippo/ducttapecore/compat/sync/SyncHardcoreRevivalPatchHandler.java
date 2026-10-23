@@ -7,7 +7,8 @@ import me.ichun.mods.sync.common.shell.ShellHandler;
 import me.ichun.mods.sync.common.tileentity.TileEntityDualVertical;
 import net.blay09.mods.hardcorerevival.HardcoreRevival;
 import net.blay09.mods.hardcorerevival.PlayerKnockedOutEvent;
-import net.blay09.mods.hardcorerevival.handler.DeathHandler;
+import net.blay09.mods.hardcorerevival.capability.CapabilityHardcoreRevival;
+import net.blay09.mods.hardcorerevival.capability.IHardcoreRevival;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -35,8 +36,13 @@ public class SyncHardcoreRevivalPatchHandler {
             return;
         }
 
-        player.getEntityData().setBoolean(DeathHandler.IGNORE_REVIVAL_DEATH, true);
-        player.onDeath(HardcoreRevival.notRescuedInTime);
+        // onDeath를 직접 부르면 HardcoreRevival의 사망 처리 도중에 재진입해서, 부활 후에
+        // HardcoreRevival이 발광/사망 메시지를 다시 적용한다. 기절 시간을 끝으로 돌려
+        // 다음 틱에 HardcoreRevival이 정상 경로로 최종 사망을 처리하게 한다.
+        IHardcoreRevival revival = player.getCapability(CapabilityHardcoreRevival.REVIVAL_CAPABILITY, null);
+        if (revival != null) {
+            revival.setDeathTime(net.blay09.mods.hardcorerevival.ModConfig.maxDeathTicks);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

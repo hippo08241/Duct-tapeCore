@@ -8,6 +8,7 @@
   "mixins": [
     "MixinWorldEvents",
     "MixinTileEntityShellStorage",
+    "MixinRescueHandler",
     "MixinMovingElevatorsCamoConsume",
     "MixinMovingElevatorsCamoHardness",
     "MixinMovingElevatorsCabinDepthOffsetLimit"

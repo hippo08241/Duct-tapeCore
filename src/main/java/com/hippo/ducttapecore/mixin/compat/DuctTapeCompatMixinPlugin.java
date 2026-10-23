@@ -39,6 +39,10 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
             return classExists("net.blay09.mods.hardcorerevival.client.ClientProxy")
                     && isPatchEnabled("MixinClientProxy", "HardcoreRevival 클라이언트 호환 패치 on/off");
         }
+        if (mixinClassName.endsWith("MixinRescueHandler")) {
+            return classExists("net.blay09.mods.hardcorerevival.handler.RescueHandler")
+                    && isPatchEnabled("MixinRescueHandler", "HardcoreRevival 다른 플레이어 부활을 사망으로 처리하지 않는 패치 (사이버웨어 소실/경험치 복제 방지) on/off");
+        }
         if (mixinClassName.endsWith("MixinTileEntityShellStorage")) {
             return classExists("me.ichun.mods.sync.common.tileentity.TileEntityShellStorage")
                     && isPatchEnabled("MixinTileEntityShellStorage", "Sync 저장고 호환 패치 on/off");

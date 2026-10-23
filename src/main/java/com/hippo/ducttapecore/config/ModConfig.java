@@ -4,6 +4,7 @@ import com.hippo.ducttapecore.DuctTapeCore;
 import com.hippo.ducttapecore.restriction.RestrictionManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -38,11 +39,21 @@ public class ModConfig {
     public static String syncRespawnMode; // "OFF", "TIMEOUT", "INSTANT"
     public static boolean syncFixShellStorageReregistration;
 
+    // ===== compat.robotic parts =====
+    public static String cyberwareDefibrillatorMode; // "OFF", "TIMEOUT", "INSTANT"
+
     // ===== compat.architecture craft =====
     public static boolean architectureCraftFixParticlesEnabled;
 
     // ===== compat.moving elevators =====
     public static boolean movingElevatorsCamoDropEnabled;
+    public static int movingElevatorsMaxCabinDepthOffset;
+
+    private static final String MIXIN_PATCHES_CATEGORY = "compat.mixin patches";
+
+    public static Configuration getConfig() {
+        return config;
+    }
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -60,8 +71,9 @@ public class ModConfig {
 
         restrictedBlocksList = config.getStringList(
                 "[2] Restricted Blocks", catRestricted,
-                new String[]{"0;minecraft:diamond_ore;§c이 블록은 이 차원에서 사용할 수 없습니다."},
-                "형식: <dimensionId|*>;<블록 registry name>;<메시지|언어 키>(생략 가능)"
+                new String[]{},
+                "형식: <dimensionId|*>;<블록 registry name>;<메시지|언어 키>(생략 가능)\n" +
+                        "예: 0;minecraft:diamond_ore;§c이 블록은 이 차원에서 사용할 수 없습니다."
         );
 
         restrictedBlocksUseActionBar = config.getBoolean(
@@ -135,6 +147,17 @@ public class ModConfig {
                 "재시작 후 저장고 인식 안 되는 Sync 버그 방지"
         );
 
+        // ---- compat.robotic parts ----
+        String catRoboticParts = "compat.robotic parts";
+
+        cyberwareDefibrillatorMode = config.getString(
+                "[1] Internal Defibrillator Mode", catRoboticParts, "INSTANT",
+                "OFF/TIMEOUT/INSTANT - 심장 재세동기 작동 시점 (HardcoreRevival 필요). " +
+                        "INSTANT: 기절하는 즉시 작동, TIMEOUT: 기절 시간이 끝나거나 사망 수락 시 작동. " +
+                        "Sync 복제인간보다 항상 먼저 작동",
+                new String[]{"OFF", "TIMEOUT", "INSTANT"}
+        );
+
         // ---- compat.architecture craft ----
         String catArchitectureCraft = "compat.architecture craft";
 
@@ -152,6 +175,17 @@ public class ModConfig {
                         "(아이템 소모 및 강도 반영 패치는 compat/mixin patches 카테고리에서 개별 설정)"
         );
 
+        movingElevatorsMaxCabinDepthOffset = config.getInt(
+                "[2] Max Cabin Depth Offset", catMovingElevators, 4, 0, 32,
+                "엘리베이터 캐빈 Depth Offset 최대치 (원본: 2). compat/mixin patches의 MixinMovingElevatorsCabinDepthOffsetLimit가 켜져 있어야 적용됨. " +
+                        "서버와 클라이언트 값이 같아야 함"
+        );
+
+        // mixin 패치 토글은 DuctTapeCompatMixinPlugin이 게임 시작 전에 읽으므로 재시작해야 적용된다.
+        if (config.hasCategory(MIXIN_PATCHES_CATEGORY)) {
+            config.getCategory(MIXIN_PATCHES_CATEGORY).setRequiresMcRestart(true);
+        }
+
         if (config.hasChanged()) {
             config.save();
         }
@@ -165,7 +199,9 @@ public class ModConfig {
                 syncConfig();
                 RestrictionManager.reload();
                 com.hippo.ducttapecore.compat.QualityToolsPatchHandler.invalidateCache();
-                com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration.syncRecipes();
+                if (Loader.isModLoaded("jei")) {
+                    com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration.syncRecipes();
+                }
             }
         }
     }

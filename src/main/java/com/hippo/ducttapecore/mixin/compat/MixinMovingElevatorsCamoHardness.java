@@ -1,5 +1,6 @@
 package com.hippo.ducttapecore.mixin.compat;
 
+import com.supermartijn642.movingelevators.blocks.CamoBlock;
 import com.supermartijn642.movingelevators.blocks.CamoBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +19,10 @@ public abstract class MixinMovingElevatorsCamoHardness {
 
     @Inject(method = "getBlockHardness", at = @At("HEAD"), cancellable = true)
     private void ducttapecore$camoHardness(IBlockState state, World worldIn, BlockPos pos, CallbackInfoReturnable<Float> cir) {
+        // 모든 블록의 강도 조회에 걸리는 mixin이라, 카모 블록이 아니면 TileEntity 조회 전에 바로 빠진다.
+        if (!((Object) this instanceof CamoBlock)) {
+            return;
+        }
         if (worldIn == null || pos == null) {
             return;
         }

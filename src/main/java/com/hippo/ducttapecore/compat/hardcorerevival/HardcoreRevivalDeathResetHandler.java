@@ -19,9 +19,6 @@ public class HardcoreRevivalDeathResetHandler {
         if (!ModConfig.hardcoreRevivalResetOnExternalReviveEnabled) {
             return;
         }
-        if (event.getSource() != HardcoreRevival.notRescuedInTime) {
-            return;
-        }
         if (!event.isCanceled()) {
             return;
         }
@@ -30,6 +27,12 @@ public class HardcoreRevivalDeathResetHandler {
         }
 
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityLiving();
+        // IGNORE_REVIVAL_DEATH가 있으면 HardcoreRevival이 이미 클라이언트에 MessageDie를 보낸 상태
+        // (기절 시간 종료, 사망 수락, 낙사 등). 이 사망이 취소됐다면 클라이언트 상태를 되돌려야 한다.
+        if (event.getSource() != HardcoreRevival.notRescuedInTime
+                && !player.getEntityData().getBoolean(DeathHandler.IGNORE_REVIVAL_DEATH)) {
+            return;
+        }
         DuctTapeCore.LOGGER.info("[DuctTapeCore] {} - 사망이 취소되어 부활함, 서버/클라이언트 상태 리셋", player.getName());
 
         player.getEntityData().removeTag(DeathHandler.IGNORE_REVIVAL_DEATH);
@@ -40,7 +43,8 @@ public class HardcoreRevivalDeathResetHandler {
         if (revival != null) {
             revival.setDeathTime(0);
         }
+        player.deathTime = 0;
 
-        NetworkHandler.channel.sendTo(new MessageResetDeathState(), player);
+        NetworkHandler.channel.sendTo(new MessageResetDeathState(player.getHealth()), player);
     }
 }

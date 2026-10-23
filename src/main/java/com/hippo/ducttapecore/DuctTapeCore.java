@@ -2,6 +2,7 @@ package com.hippo.ducttapecore;
 
 import com.hippo.ducttapecore.compat.QualityToolsPatchHandler;
 import com.hippo.ducttapecore.compat.architecturecraft.ArchitectureCraftParticleFixHandler;
+import com.hippo.ducttapecore.compat.cyberware.CyberwareDefibrillatorHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalClientTickHandler;
 import com.hippo.ducttapecore.compat.hardcorerevival.HardcoreRevivalDeathResetHandler;
 import com.hippo.ducttapecore.compat.jei.QualityToolsJeiIntegration;
@@ -27,14 +28,15 @@ import org.apache.logging.log4j.Logger;
         modid = DuctTapeCore.MODID,
         name = DuctTapeCore.NAME,
         version = DuctTapeCore.VERSION,
-        dependencies = "after:qualitytools;after:jei",
+        dependencies = "after:qualitytools;after:jei;after:cyberware",
+        guiFactory = "com.hippo.ducttapecore.config.ModConfigGuiFactory",
         acceptedMinecraftVersions = "[1.12.2]"
 )
 public class DuctTapeCore {
 
     public static final String MODID = "ducttapecore";
     public static final String NAME = "DuctTapeCore";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = Reference.VERSION;
 
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
@@ -45,12 +47,14 @@ public class DuctTapeCore {
     public void preInit(FMLPreInitializationEvent event) {
         LOGGER.info("[{}] preInit - config 로드 중...", NAME);
         ModConfig.init(event.getSuggestedConfigurationFile());
-        RestrictionManager.reload();
         NetworkHandler.init();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        // 블록 레지스트리 이벤트는 preInit 이후에 발생하므로, 다른 모드 블록까지 찾으려면 init에서 로드해야 한다.
+        RestrictionManager.reload();
+
         LOGGER.info("[{}] init - 이벤트 핸들러 등록", NAME);
         MinecraftForge.EVENT_BUS.register(new PotionHandler());
         MinecraftForge.EVENT_BUS.register(new InteractionHandler());
@@ -70,6 +74,11 @@ public class DuctTapeCore {
         if (Loader.isModLoaded("sync") && Loader.isModLoaded("hardcorerevival")) {
             LOGGER.info("[{}] Sync + HardcoreRevival 둘 다 감지됨 - 호환성 패치 핸들러 등록", NAME);
             MinecraftForge.EVENT_BUS.register(new SyncHardcoreRevivalPatchHandler());
+        }
+
+        if (Loader.isModLoaded("cyberware") && Loader.isModLoaded("hardcorerevival")) {
+            LOGGER.info("[{}] Robotic Parts + HardcoreRevival 둘 다 감지됨 - 심장 재세동기 호환성 핸들러 등록", NAME);
+            MinecraftForge.EVENT_BUS.register(new CyberwareDefibrillatorHandler());
         }
 
         if (Loader.isModLoaded("hardcorerevival")) {

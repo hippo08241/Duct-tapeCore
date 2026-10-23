@@ -261,6 +261,7 @@ dependencies {
     modCompileOnly 'curse.maven:moving-elevators-373051:7600431'
     modCompileOnly 'curse.maven:supermartijn642s-config-lib-438332:4715393'
     modCompileOnly 'curse.maven:supermartijn642s-core-lib-454372:8670300'
+    modCompileOnly 'curse.maven:robotic-parts-283377:3366534'
 }
 
 tasks.withType(JavaCompile).configureEach {

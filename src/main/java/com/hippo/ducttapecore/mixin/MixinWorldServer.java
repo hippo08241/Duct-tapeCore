@@ -31,7 +31,9 @@ public abstract class MixinWorldServer {
         block.randomTick(world, pos, state, rand);
     }
 
-    @Inject(method = "scheduleBlockUpdate", at = @At("HEAD"), cancellable = true)
+    // updateBlockTick: 일반적인 scheduled tick 경로 (scheduleUpdate도 여기로 들어옴)
+    // scheduleBlockUpdate: 청크 NBT에서 불러온 scheduled tick
+    @Inject(method = {"updateBlockTick", "scheduleBlockUpdate"}, at = @At("HEAD"), cancellable = true)
     private void ducttapecore$onScheduleUpdate(BlockPos pos, Block blockIn, int delay, int priority, CallbackInfo ci) {
         World self = (World) (Object) this;
         if (RestrictionManager.isRestricted(self.provider.getDimension(), blockIn)) {
