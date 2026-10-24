@@ -144,7 +144,8 @@ public class ModConfig {
 
         syncFixShellStorageReregistration = config.getBoolean(
                 "[2] Fix Shell Storage Not Recognized After Restart Toggle", catSync, true,
-                "재시작 후 저장고 인식 안 되는 Sync 버그 방지"
+                "재접속/재시작 후 저장고의 복제인간이 사라지거나 인식 안 되는 Sync 버그 방지 " +
+                        "(로드 직후 전력이 들어오기 전 첫 틱에 복제인간이 지워지는 문제 포함)"
         );
 
         // ---- compat.robotic parts ----

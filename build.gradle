@@ -264,6 +264,41 @@ dependencies {
     modCompileOnly 'curse.maven:robotic-parts-283377:3366534'
 }
 
+// mixin json에 적힌 클래스가 최종 jar에 전부 들어갔는지 확인한다. 빠지면 게임에서 조용히 패치가 적용되지 않는다.
+tasks.register('verifyMixinClasses') {
+    dependsOn 'remapJar'
+    def jarProvider = tasks.named('remapJar').flatMap { it.archiveFile }
+    def mixinJsons = fileTree('src/main/resources') { include '*.mixin.json' }
+    inputs.file(jarProvider)
+    inputs.files(mixinJsons)
+    doLast {
+        def jarFile = jarProvider.get().asFile
+        def zip = new java.util.zip.ZipFile(jarFile)
+        try {
+            def missing = []
+            mixinJsons.each { f ->
+                def json = new groovy.json.JsonSlurper().parse(f)
+                def pkg = json.package.replace('.', '/')
+                ((json.mixins ?: []) + (json.client ?: []) + (json.server ?: [])).each { name ->
+                    def path = "${pkg}/${name.replace('.', '/')}.class"
+                    if (zip.getEntry(path) == null) {
+                        missing << "${f.name}: ${path}"
+                    }
+                }
+            }
+            if (!missing.isEmpty()) {
+                throw new GradleException("Mixin classes missing from ${jarFile.name}:\n  " + missing.join('\n  '))
+            }
+        } finally {
+            zip.close()
+        }
+    }
+}
+
+tasks.named('build') {
+    dependsOn 'verifyMixinClasses'
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
