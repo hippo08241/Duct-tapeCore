@@ -43,6 +43,11 @@ public class DuctTapeCompatMixinPlugin implements IMixinConfigPlugin {
             return classExists("net.blay09.mods.hardcorerevival.handler.RescueHandler")
                     && isPatchEnabled("MixinRescueHandler", "HardcoreRevival 다른 플레이어 부활을 사망으로 처리하지 않는 패치 (사이버웨어 소실/경험치 복제 방지) on/off");
         }
+        if (mixinClassName.endsWith("MixinHardcoreRevivalDeathHandler")) {
+            return classExists("net.blay09.mods.hardcorerevival.handler.DeathHandler")
+                    && classExists("flaxbeard.cyberware.common.item.ItemHeartUpgrade")
+                    && isPatchEnabled("MixinHardcoreRevivalDeathHandler", "Robotic Parts 재세동기가 HardcoreRevival 기절 전에 작동하게 하는 패치 (INSTANT 모드) on/off");
+        }
         if (mixinClassName.endsWith("MixinTileEntityShellStorage")) {
             return classExists("me.ichun.mods.sync.common.tileentity.TileEntityShellStorage")
                     && isPatchEnabled("MixinTileEntityShellStorage", "Sync 저장고 호환 패치 on/off");

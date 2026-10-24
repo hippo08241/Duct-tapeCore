@@ -10,7 +10,10 @@ import net.blay09.mods.hardcorerevival.HardcoreRevival;
 import net.blay09.mods.hardcorerevival.PlayerKnockedOutEvent;
 import net.blay09.mods.hardcorerevival.capability.CapabilityHardcoreRevival;
 import net.blay09.mods.hardcorerevival.capability.IHardcoreRevival;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -22,8 +25,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * <p>
  * HardcoreRevival이 첫 사망을 HIGHEST에서 취소(기절)하기 때문에 재세동기는 기절 중에는 작동하지 않고,
  * 기절 시간이 끝난 "최종 사망" 때 Sync 복제인간과 같은 NORMAL 우선순위에서 경쟁한다(순서는 모드 로드 순서에 따름).
- * 여기서는 최종 사망 시 재세동기를 HIGH에서 먼저 실행해 순서를 고정하고,
- * INSTANT 모드면 기절 즉시 최종 사망 처리로 넘겨 재세동기가 바로 작동하게 한다.
+ * 여기서는 최종 사망 시 재세동기를 HIGH에서 먼저 실행해 순서를 고정한다.
+ * INSTANT 모드는 MixinHardcoreRevivalDeathHandler가 HardcoreRevival의 기절 처리 직전에 재세동기를 실행한다
+ * (기절/발광/사망 메시지 없이 바로 부활). 그 mixin이 꺼져 있으면 onPlayerKnockedOut이 대신
+ * 기절 즉시 최종 사망 처리로 넘겨 재세동기가 작동하게 한다.
  */
 public class CyberwareDefibrillatorHandler {
 
@@ -62,17 +67,35 @@ public class CyberwareDefibrillatorHandler {
         if (!(event.getEntityLiving() instanceof EntityPlayerMP)) {
             return;
         }
-        if (!(CyberwareContent.heartUpgrades instanceof ItemHeartUpgrade)) {
-            return;
-        }
 
         // Cyberware의 원래 핸들러를 먼저 호출한다. 작동하면 이벤트가 취소되어
         // NORMAL의 Cyberware 핸들러와 Sync 핸들러는 호출되지 않는다.
-        ((ItemHeartUpgrade) CyberwareContent.heartUpgrades).handleDeath(event);
+        tryDefibrillate(event);
+    }
 
-        if (event.isCanceled()) {
-            DuctTapeCore.LOGGER.info("[DuctTapeCore] {} - 심장 재세동기 작동", event.getEntityLiving().getName());
+    /**
+     * Cyberware의 재세동기 처리를 실행한다. 작동하면 이벤트가 취소되고 true를 반환한다.
+     * INSTANT 모드에서는 MixinHardcoreRevivalDeathHandler가 HardcoreRevival의 기절 처리 전에 이걸 호출한다.
+     */
+    public static boolean tryDefibrillate(LivingDeathEvent event) {
+        if (event.isCanceled() || !(CyberwareContent.heartUpgrades instanceof ItemHeartUpgrade)) {
+            return false;
         }
+
+        ((ItemHeartUpgrade) CyberwareContent.heartUpgrades).handleDeath(event);
+        if (!event.isCanceled()) {
+            return false;
+        }
+
+        EntityLivingBase entity = event.getEntityLiving();
+        DuctTapeCore.LOGGER.info("[DuctTapeCore] {} - 심장 재세동기 작동", entity.getName());
+
+        // 체력 1/3로만 살아나서 공격받던 상대에게 곧바로 다시 쓰러지는 것을 막는다.
+        int protectionTicks = ModConfig.cyberwareDefibrillatorProtectionTicks;
+        if (protectionTicks > 0) {
+            entity.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, protectionTicks, 4, false, true));
+        }
+        return true;
     }
 
     private static boolean hasUsableDefibrillator(EntityPlayer player) {

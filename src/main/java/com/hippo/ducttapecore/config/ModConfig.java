@@ -41,6 +41,7 @@ public class ModConfig {
 
     // ===== compat.robotic parts =====
     public static String cyberwareDefibrillatorMode; // "OFF", "TIMEOUT", "INSTANT"
+    public static int cyberwareDefibrillatorProtectionTicks;
 
     // ===== compat.architecture craft =====
     public static boolean architectureCraftFixParticlesEnabled;
@@ -157,6 +158,12 @@ public class ModConfig {
                         "INSTANT: 기절하는 즉시 작동, TIMEOUT: 기절 시간이 끝나거나 사망 수락 시 작동. " +
                         "Sync 복제인간보다 항상 먼저 작동",
                 new String[]{"OFF", "TIMEOUT", "INSTANT"}
+        );
+
+        cyberwareDefibrillatorProtectionTicks = config.getInt(
+                "[2] Protection Ticks After Revival", catRoboticParts, 60, 0, 1200,
+                "재세동기로 부활한 뒤 저항 V(받는 피해 무효)를 부여할 시간 (틱, 20틱 = 1초). 0이면 끔. " +
+                        "재세동기는 체력 1/3로 살아나므로, 없으면 공격하던 몹에게 곧바로 다시 쓰러지기 쉬움"
         );
 
         // ---- compat.architecture craft ----
